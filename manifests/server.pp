@@ -16,11 +16,11 @@
 #
 
 class vernemq::server (
+  $cluster_cookie,
+  $infra_service_password,
   $websocket_port = 80,
   $websocket_tls_port = 443,
   $infra_service_username = 'infra',
-  $infra_service_password,
-  $cluster_cookie,
   $enable_tls = false,
   $ca_file = undef,
   $cert_file = undef,
@@ -38,8 +38,8 @@ class vernemq::server (
   # NOTE(mtreinish): keep 2 copies to avoid running a rehash on every puppet
   # update
   file {'/etc/vernemq/vmq.passwd':
-    ensure => present,
-    source => '/etc/vernemq/.vmq.passwd.unhashed',
+    ensure  => present,
+    source  => '/etc/vernemq/.vmq.passwd.unhashed',
     owner   => 'root',
     group   => 'root',
     mode    => '0600',
@@ -118,9 +118,9 @@ class vernemq::server (
   }
 
   service { 'vernemq':
-    ensure      => running,
+    ensure     => running,
     hasrestart => true,
-    subscribe   => [
+    subscribe  => [
       File['/etc/vernemq/vmq.passwd'],
       Exec['hash_password'],
       File['/etc/vernemq/vernemq.conf'],
