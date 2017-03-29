@@ -46,6 +46,13 @@ class vernemq::server (
     require => File['/etc/vernemq/.vmq.passwd.unhashed'],
   }
 
+  exec {'enable_port_bind':
+    command     => 'setcap cap_net_bind_service=+ep /usr/lib/vernemq/erts-8.2/bin/beam.smp',
+    path        => ['/usr/bin', '/usr/sbin', '/bin/', '/sbin',],
+    environment => 'HOME=/root',
+  }
+
+
   exec {'hash_password':
     command     => 'vmq-passwd -U /etc/vernemq/vmq.passwd',
     path        => ['/usr/bin', '/usr/sbin', '/bin/', '/sbin',],
@@ -124,6 +131,7 @@ class vernemq::server (
       File['/etc/vernemq/vmq.passwd'],
       Exec['hash_password'],
       File['/etc/vernemq/vernemq.conf'],
+      Exec['enable_port_bind'],
     ],
   }
 
